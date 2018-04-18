@@ -3,28 +3,22 @@
 
 int *lista;
 int tamanho_total;
-int tamanho_atual;
+int tamanho_atual = 0;
 int indice = 0;
 
-int* iniciar_lista(int length){
+int* iniciar_lista(){
     int *temp;
     size_t size;
-    size = sizeof(int) * (length > 0 ? length : 1);
+    size = sizeof(int) * 10;
     tamanho_total = size / sizeof(int);
     temp = (int*) malloc(size);
     return temp;
 }
 
-void inserir(int valor){
+void add(int valor){
     if (full()){
-        int temp[tamanho_total], i;
-        for (i = 0; i < tamanho_total; i++){
-            temp[i] = lista[i];
-        }
-        lista = iniciar_lista(tamanho_total * 2);
-        for (i = 0; i < tamanho_total; i++){
-            lista[i] = temp[i];
-        }
+        tamanho_total *= 2;
+        lista = (int*) realloc(lista, sizeof(int) * tamanho_total);
     }
 
         // Insere
@@ -33,8 +27,10 @@ void inserir(int valor){
 
 }
 
-int tamanho(){
-    return tamanho_atual;
+void addat(int valor, int index){
+    if (index < 0 || index >= tamanho_atual)
+        return;
+    lista[index] = valor;
 }
 
 int full(){
@@ -45,24 +41,48 @@ int full(){
     }
 }
 
+void remover(int index){
+    if (index < 0 || index >= tamanho_atual)
+        return;
+
+    int i, j, *newarr = (int*) malloc(sizeof(int) * tamanho_atual * 2);
+    for (i = 0, j = 0; i < tamanho_atual; i++){
+        if (i != index){
+            newarr[j] = lista[i];
+            j++;
+        }
+    }
+    free(lista);
+    lista = newarr;
+    tamanho_atual--;
+}
+
 int get(int index){
-    if (index < 0 || index > tamanho_atual)
+    if (index < 0 || index >= tamanho_atual)
         return -1;
     else
         return lista[index];
 }
 
-int main(){
+void get_all(){
     int i;
-    lista = iniciar_lista(10);
-    tamanho_atual = 0;
-    for (i = 0; i < 30; i++){
-        inserir(i+1);
-    }
-    for (i = 0; i < tamanho(); i++){
+    for (i = 0; i < tamanho_atual; i++){
         printf("%d\n", get(i));
     }
+}
 
-    printf("length %d", tamanho());
+int main(){
+    int i;
+    lista = iniciar_lista();
+    for (i = 0; i < 101; i++){
+        add(i+1);
+    }
+
+    get_all();
+
+    remover(0);
+
+    printf("\nlength %d", tamanho_atual);
+    free(lista);
     return 0;
 }
