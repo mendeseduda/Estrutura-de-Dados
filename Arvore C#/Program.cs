@@ -60,7 +60,7 @@ namespace Corno
             {
                 return ar.valor;
             }
-            return imprimirMenor(ar.dir);
+            return imprimirMaior(ar.dir);
         }
 
         static void Main(string[] args)
